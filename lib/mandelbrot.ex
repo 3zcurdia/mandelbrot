@@ -5,6 +5,7 @@ defmodule Mandelbrot do
   import Bitwise
 
   def generate(size) do
+    IO.binwrite("P4\n#{size} #{size}\n")
     max = size - 1
 
     0..max

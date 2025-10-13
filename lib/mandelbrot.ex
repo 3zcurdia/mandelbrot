@@ -15,8 +15,7 @@ defmodule Mandelbrot do
       ordered: true,
       timeout: :infinity
     )
-    |> Stream.map(fn {:ok, res} -> res end)
-    |> Enum.each(&IO.binwrite(:stdio, &1))
+    |> Enum.each(fn {:ok, res} -> IO.binwrite(:stdio, res) end)
   end
 
   def row(y, row_size) do

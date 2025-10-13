@@ -1,6 +1,6 @@
 # Mandelbrot
 
-**TODO: Add description**
+Simple mandelbrot generator, using basic parallelism and distributed computing.
 
 ## Installation
 
@@ -15,7 +15,14 @@ def deps do
 end
 ```
 
+## Usage
+
+To generate a mandelbrot image:
+
+```
+mandelbrot 1600 > image.pbm
+```
+
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/mandelbrot>.
-

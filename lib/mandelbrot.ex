@@ -4,6 +4,20 @@ defmodule Mandelbrot do
   """
   import Bitwise
 
+  def generate(size) do
+    max = size - 1
+
+    0..max
+    |> Task.async_stream(
+      &row(&1, size),
+      max_concurrency: System.schedulers_online(),
+      ordered: true,
+      timeout: :infinity
+    )
+    |> Stream.map(fn {:ok, res} -> res end)
+    |> Enum.each(&IO.binwrite(:stdio, &1))
+  end
+
   def row(y, row_size) do
     ci = 2.0 * y / row_size - 1.0
 
@@ -12,7 +26,7 @@ defmodule Mandelbrot do
     |> IO.iodata_to_binary()
   end
 
-  defp build_row(x, _ci, _byte_acc, _bit_num, acc, row_size) when x == row_size, do: acc
+  defp build_row(x, _ci, _byte_acc, _bit_num, acc, row_size) when x >= row_size, do: acc
 
   defp build_row(x, ci, byte_acc, bit_num, acc, row_size) do
     cr = 2.0 * x / row_size - 1.5
@@ -42,11 +56,7 @@ defmodule Mandelbrot do
     else
       tr = zrzr - zizi + cr
       ti = 2.0 * zr * zi + ci
-      zr = tr
-      zi = ti
-      zrzr = zr * zr
-      zizi = zi * zi
-      mandelbrot_escape(cr, ci, zr, zi, zrzr, zizi, iter + 1)
+      mandelbrot_escape(cr, ci, tr, ti, tr * tr, ti * ti, iter + 1)
     end
   end
 end

@@ -6,23 +6,21 @@ defmodule Mandelbrot do
 
   def generate(size) do
     IO.binwrite("P4\n#{size} #{size}\n")
-    max = size - 1
 
-    0..max
+    0..(size - 1)
     |> Task.async_stream(
       &row(&1, size),
       max_concurrency: System.schedulers_online(),
       ordered: true,
       timeout: :infinity
     )
-    |> Enum.each(fn {:ok, res} -> IO.binwrite(:stdio, res) end)
+    |> Enum.each(fn {:ok, row} -> IO.binwrite(:stdio, row) end)
   end
 
   def row(y, row_size) do
     ci = 2.0 * y / row_size - 1.0
 
     build_row(0, ci, 0, 0, [], row_size)
-    |> Enum.reverse()
     |> IO.iodata_to_binary()
   end
 
@@ -37,11 +35,11 @@ defmodule Mandelbrot do
 
     cond do
       bit_num == 8 ->
-        build_row(x + 1, ci, 0, 0, [<<byte_acc>> | acc], row_size)
+        build_row(x + 1, ci, 0, 0, [acc, <<byte_acc>>], row_size)
 
       x == row_size - 1 ->
         byte_acc = byte_acc <<< (8 - bit_num)
-        build_row(x + 1, ci, 0, 0, [<<byte_acc>> | acc], row_size)
+        [acc, <<byte_acc>>]
 
       true ->
         build_row(x + 1, ci, byte_acc, bit_num, acc, row_size)

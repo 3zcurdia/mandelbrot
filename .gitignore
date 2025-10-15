@@ -21,3 +21,6 @@ mandelbrot-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Esbuild script
+mandelbrot
